@@ -5,6 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Syed Anas Mohiuddin — AI Security Researcher</title>
 <meta name="description" content="Syed Anas Mohiuddin is an AI security researcher (CVE-2026-14540, Google MCP Toolbox) and founder of Cognivators, working on Model Context Protocol (MCP) security.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Syed Anas Mohiuddin">
+<link rel="canonical" href="https://syedanas01.github.io/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230d1012%22/%3E%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20font-family%3D%22monospace%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%20fill%3D%22%235ee6bf%22%20text-anchor%3D%22middle%22%3E%26gt%3B_%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0d1012">
+
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Syed Anas Mohiuddin — AI Security Researcher">
+<meta property="og:description" content="AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (Google MCP Toolbox, CVSS 8.0). Founder of Cognivators.">
+<meta property="og:url" content="https://syedanas01.github.io/">
+<meta property="og:site_name" content="Syed Anas Mohiuddin">
+<meta property="og:image" content="https://syedanas01.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Syed Anas Mohiuddin — AI security researcher, Model Context Protocol">
+<meta property="profile:first_name" content="Syed Anas">
+<meta property="profile:last_name" content="Mohiuddin">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Syed Anas Mohiuddin — AI Security Researcher">
+<meta name="twitter:description" content="Discoverer of CVE-2026-14540 (Google MCP Toolbox, CVSS 8.0). Maintainer of mcp-safeguard. Model Context Protocol security research.">
+<meta name="twitter:image" content="https://syedanas01.github.io/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -191,6 +214,44 @@
 
   ul.links a:hover { border-color: var(--accent-dim); color: var(--ink); }
 
+  details.faq {
+    border-bottom: 1px solid var(--line);
+    padding: 18px 0;
+  }
+
+  details.faq:first-of-type { border-top: 1px solid var(--line); }
+
+  details.faq summary {
+    cursor: pointer;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--ink);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  details.faq summary::-webkit-details-marker { display: none; }
+
+  details.faq summary::after {
+    content: "+";
+    color: var(--accent);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  details.faq[open] summary::after { transform: rotate(45deg); }
+
+  details.faq p {
+    margin: 12px 0 0;
+    color: var(--ink-dim);
+    font-size: 13.5px;
+    max-width: 58ch;
+  }
+
   footer {
     margin-top: 88px;
     padding-top: 20px;
@@ -258,9 +319,49 @@
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Who is Syed Anas Mohiuddin?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Syed Anas Mohiuddin is an AI security researcher who focuses on Model Context Protocol (MCP) security. He discovered CVE-2026-14540, a Server-Side Request Forgery vulnerability in Google's MCP Toolbox for Databases, and maintains mcp-safeguard, an open-source security scanner for MCP servers. He is also the founder of Cognivators, an AI automation studio."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is CVE-2026-14540?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CVE-2026-14540 is a Server-Side Request Forgery (SSRF) vulnerability in Google's MCP Toolbox for Databases, discovered and reported by Syed Anas Mohiuddin. It was assigned by Google, acting as the CVE Numbering Authority (CNA), with a CVSS v4.0 score of 8.0 (High), and published on 2026-07-31."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is mcp-safeguard?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "mcp-safeguard is an open-source static-analysis security scanner for Model Context Protocol (MCP) servers, created and maintained by Syed Anas Mohiuddin. It checks for prompt injection, credential exposure, server-side request forgery (SSRF), and tool-poisoning risks across 66 rules, and is published on PyPI."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Model Context Protocol (MCP)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Model Context Protocol (MCP) is a standard that lets AI agents and large language models connect to external tools, data sources, and other agents. Because it grants AI systems the ability to take real actions, MCP servers have become a focus of security research, including work by Syed Anas Mohiuddin on vulnerabilities across the MCP ecosystem."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
-<div class="wrap">
+<main class="wrap">
 
   <p class="kicker">whoami</p>
   <h1>Syed Anas&nbsp;Mohiuddin</h1>
@@ -380,14 +481,41 @@
   </section>
 
   <section>
+    <h2>FAQ</h2>
+    <div class="rule"></div>
+
+    <details class="faq">
+      <summary>Who is Syed Anas Mohiuddin?</summary>
+      <p>An AI security researcher focused on Model Context Protocol (MCP) security. I discovered CVE-2026-14540 in Google's MCP Toolbox for Databases, maintain the open-source scanner mcp-safeguard, and founded Cognivators, an AI automation studio.</p>
+    </details>
+
+    <details class="faq">
+      <summary>What is CVE-2026-14540?</summary>
+      <p>A Server-Side Request Forgery (SSRF) vulnerability in Google's MCP Toolbox for Databases. Assigned by Google as CNA with a CVSS v4.0 score of 8.0 (High), published 2026-07-31, crediting me as finder.</p>
+    </details>
+
+    <details class="faq">
+      <summary>What is mcp-safeguard?</summary>
+      <p>An open-source static-analysis scanner for MCP servers, published on PyPI, checking for prompt injection, credential exposure, SSRF, and tool-poisoning risks across 66 rules.</p>
+    </details>
+
+    <details class="faq">
+      <summary>What is the Model Context Protocol?</summary>
+      <p>A standard that lets AI agents and LLMs connect to external tools, data sources, and other agents. Because it grants AI systems the ability to take real actions, its security is an active research area, including the disclosure work described above.</p>
+    </details>
+  </section>
+
+  <section aria-label="Profile links">
     <h2>Elsewhere</h2>
-    <ul class="links">
-      <li><a href="https://github.com/SyedAnas01">GitHub</a></li>
-      <li><a href="https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en">Google Scholar</a></li>
-      <li><a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF Datatracker</a></li>
-      <li><a href="https://dev.to/syedanas01">dev.to</a></li>
-      <li><a href="https://pypi.org/project/mcp-safeguard/">PyPI</a></li>
-    </ul>
+    <nav>
+      <ul class="links">
+        <li><a href="https://github.com/SyedAnas01">GitHub</a></li>
+        <li><a href="https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en">Google Scholar</a></li>
+        <li><a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF Datatracker</a></li>
+        <li><a href="https://dev.to/syedanas01">dev.to</a></li>
+        <li><a href="https://pypi.org/project/mcp-safeguard/">PyPI</a></li>
+      </ul>
+    </nav>
   </section>
 
   <footer>
@@ -395,6 +523,6 @@
     <span>last verified 2026-09-05</span>
   </footer>
 
-</div>
+</main>
 </body>
 </html>

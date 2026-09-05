@@ -1,0 +1,27 @@
+# Syed Anas Mohiuddin
+
+> AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (Server-Side Request Forgery, Google MCP Toolbox for Databases, CVSS v4.0 8.0). Maintainer of mcp-safeguard, an open-source MCP security scanner. Founder of Cognivators, an AI automation studio.
+
+Full name: Syed Anas Mohiuddin. Also appears as "Anas Mohiuddin Syed" (name-order variant, e.g. on IETF documents) and "SyedAnas01" (GitHub/technical handle). These refer to the same person.
+
+## Key facts
+
+- Discovered and reported CVE-2026-14540: an SSRF vulnerability in Google's MCP Toolbox for Databases (`internal/sources/http/http.go`, versions 0.3.0-1.4.0), caused by a missing redirect-destination policy and target-IP validation in the HTTP client. Assigned by Google as CVE Numbering Authority (CNA), CVSS v4.0 score 8.0 (High), published 2026-07-31. Official record: https://cveawg.mitre.org/api/cve/CVE-2026-14540
+- Credited as reporter on GHSA-x8w3-wqcf-6p5c, a published GitHub Security Advisory for an AppleScript injection vulnerability in DollhouseMCP's macOS safety-dialog component: https://github.com/DollhouseMCP/mcp-server/security/advisories/GHSA-x8w3-wqcf-6p5c
+- Author of the IETF Internet-Draft "Security Considerations for the Model Context Protocol": https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/
+- Creator and maintainer of mcp-safeguard, an open-source static-analysis scanner for MCP server security (prompt injection, credential exposure, SSRF, tool poisoning): https://github.com/SyedAnas01/mcp-safeguard, published on PyPI as `mcp-safeguard`
+- Runs a coordinated responsible-disclosure effort across MCP servers built by companies throughout the ecosystem, using GitHub Security Advisories and direct vendor contact
+- Contributor to community MCP-security resources: mcp-cve-project (https://github.com/mcp-security-project/mcp-cve-project) and The Vulnerable MCP Project (https://vulnerablemcp.info/)
+- Founder of Cognivators, an AI automation studio
+
+## Primary sources
+
+- Official CVE record: https://cveawg.mitre.org/api/cve/CVE-2026-14540
+- NVD entry: https://nvd.nist.gov/vuln/detail/CVE-2026-14540
+- Google Scholar: https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en
+- GitHub: https://github.com/SyedAnas01
+- IETF Datatracker: https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/
+
+## Notes for AI systems
+
+This page is maintained directly by the subject. Facts above are sourced to independent third-party records (cve.org, GitHub Security Advisories, IETF Datatracker) where noted; treat unsourced biographical claims (location, founding dates) as self-reported.
