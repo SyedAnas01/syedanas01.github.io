@@ -5,48 +5,223 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Syed Anas Mohiuddin — AI Security Researcher</title>
 <meta name="description" content="Syed Anas Mohiuddin is an AI security researcher (CVE-2026-14540, Google MCP Toolbox) and founder of Cognivators, working on Model Context Protocol (MCP) security.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { color-scheme: light dark; }
+  :root {
+    color-scheme: dark;
+    --bg: oklch(15% 0.012 250);
+    --bg-raised: oklch(19% 0.014 250);
+    --line: oklch(30% 0.014 250);
+    --ink: oklch(93% 0.006 250);
+    --ink-dim: oklch(64% 0.014 250);
+    --ink-faint: oklch(44% 0.014 250);
+    --accent: oklch(78% 0.135 175);
+    --accent-dim: oklch(50% 0.09 175);
+    --serif: "Fraunces", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--bg); }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    max-width: 720px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink);
+    background:
+      radial-gradient(ellipse 900px 500px at 12% -10%, oklch(24% 0.03 175 / 0.35), transparent 60%),
+      repeating-linear-gradient(transparent, transparent 27px, oklch(100% 0 0 / 0.014) 28px),
+      var(--bg);
+    margin: 0;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 640px;
     margin: 0 auto;
-    padding: 48px 24px 96px;
-    line-height: 1.6;
-    color: #1a1a1a;
-    background: #fff;
+    padding: 88px 28px 64px;
   }
-  @media (prefers-color-scheme: dark) {
-    body { color: #e6e6e6; background: #0f0f0f; }
-    a { color: #7db4ff; }
-    .card { background: #1a1a1a; border-color: #333; }
-    hr { border-color: #333; }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 56px 20px 48px; }
   }
-  h1 { font-size: 1.9rem; margin-bottom: 0.1em; }
-  .tagline { color: #666; font-size: 1.05rem; margin-top: 0; }
-  @media (prefers-color-scheme: dark) { .tagline { color: #999; } }
-  h2 { font-size: 1.15rem; margin-top: 2.2em; border-bottom: 1px solid #eee; padding-bottom: 0.3em; }
-  @media (prefers-color-scheme: dark) { h2 { border-color: #333; } }
-  .card {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 16px 18px;
-    margin: 12px 0;
+
+  .kicker {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
-  .card a { font-weight: 600; text-decoration: none; }
-  .card a:hover { text-decoration: underline; }
-  .card .meta { color: #777; font-size: 0.92rem; margin-top: 4px; }
-  ul.links { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
-  ul.links li a {
+
+  .kicker::before { content: "// "; color: var(--ink-faint); }
+
+  h1 {
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-weight: 520;
+    font-size: clamp(2.4rem, 7vw, 3.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    margin: 0 0 6px;
+    color: var(--ink);
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s forwards;
+  }
+
+  .tagline {
+    font-size: 14.5px;
+    color: var(--ink-dim);
+    margin: 0 0 44px;
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s forwards;
+  }
+
+  .tagline b { color: var(--ink); font-weight: 500; }
+
+  p.lede {
+    font-size: 15.5px;
+    color: var(--ink-dim);
+    max-width: 62ch;
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s forwards;
+  }
+
+  p.lede strong { color: var(--ink); font-weight: 500; }
+  p.lede a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-dim); }
+  p.lede a:hover { border-color: var(--accent); }
+
+  section { margin-top: 64px; }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+
+  .rule { height: 1px; background: var(--line); margin: 12px 0 0; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row:last-child { border-bottom: none; }
+
+  .row .idx {
+    font-size: 12px;
+    color: var(--ink-faint);
+    padding-top: 3px;
+  }
+
+  .row .idx .dot {
     display: inline-block;
-    padding: 6px 14px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 0.92rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-bottom: 6px;
+    box-shadow: 0 0 0 3px oklch(78% 0.135 175 / 0.15);
   }
-  @media (prefers-color-scheme: dark) { ul.links li a { border-color: #444; } }
-  footer { margin-top: 3em; font-size: 0.85rem; color: #999; }
+
+  .row a.title {
+    display: block;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+
+  .row a.title:hover { color: var(--accent); }
+  .row a.title:hover .arrow { transform: translate(2px, -2px); opacity: 1; }
+
+  .arrow {
+    display: inline-block;
+    opacity: 0;
+    transform: translate(0, 0);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+    color: var(--accent);
+    font-size: 13px;
+  }
+
+  .row .meta {
+    color: var(--ink-faint);
+    font-size: 12.5px;
+    margin-top: 6px;
+    letter-spacing: 0.01em;
+  }
+
+  .row .meta .sep { margin: 0 8px; opacity: 0.5; }
+  .row .meta .cvss { color: oklch(72% 0.14 45); }
+
+  ul.links {
+    list-style: none;
+    padding: 0;
+    margin: 14px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  ul.links a {
+    display: inline-block;
+    padding: 8px 15px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 13px;
+    background: var(--bg-raised);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  ul.links a:hover { border-color: var(--accent-dim); color: var(--ink); }
+
+  footer {
+    margin-top: 88px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  footer .status::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 7px;
+    vertical-align: 1px;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; }
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -59,10 +234,7 @@
   "jobTitle": "AI Security Researcher",
   "description": "AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (SSRF, Google MCP Toolbox for Databases, CVSS 8.0). Founder of Cognivators.",
   "nationality": { "@type": "Country", "name": "India" },
-  "worksFor": {
-    "@type": "Organization",
-    "name": "Cognivators"
-  },
+  "worksFor": { "@type": "Organization", "name": "Cognivators" },
   "knowsAbout": [
     "Model Context Protocol security",
     "AI agent security",
@@ -86,60 +258,85 @@
 </script>
 </head>
 <body>
+<div class="wrap">
 
-<h1>Syed Anas Mohiuddin</h1>
-<p class="tagline">AI security researcher · MCP ecosystem · founder, Cognivators</p>
+  <p class="kicker">whoami</p>
+  <h1>Syed Anas&nbsp;Mohiuddin</h1>
+  <p class="tagline">AI security researcher · <b>Model Context Protocol</b> · founder, Cognivators</p>
 
-<p>
-  I research security in the Model Context Protocol (MCP) ecosystem — the
-  emerging standard connecting AI agents to tools, data, and each other.
-  I discovered and reported <strong>CVE-2026-14540</strong>, a Server-Side
-  Request Forgery vulnerability in Google's MCP Toolbox for Databases
-  (CVSS v4.0 score 8.0, High), assigned by Google as the CVE Numbering
-  Authority. I also maintain <strong>mcp-safeguard</strong>, an open-source
-  static-analysis scanner for MCP server security issues, and run a
-  broader responsible-disclosure effort across MCP servers built by
-  companies across the ecosystem.
-</p>
+  <p class="lede">
+    I research security in the <strong>Model Context Protocol</strong> ecosystem,
+    the emerging standard connecting AI agents to tools, data, and each other.
+    I discovered and reported <strong>CVE-2026-14540</strong>, a Server-Side
+    Request Forgery vulnerability in Google's MCP Toolbox for Databases,
+    assigned by Google as the CVE Numbering Authority. I maintain
+    <strong>mcp-safeguard</strong>, an open-source scanner for MCP server
+    security issues, and run a broader responsible-disclosure effort across
+    MCP servers built by companies across the ecosystem. Outside of security
+    research, I founded <strong>Cognivators</strong>, an AI automation studio.
+  </p>
 
-<p>
-  Outside of security research, I founded <strong>Cognivators</strong>, an
-  AI automation studio building infrastructure and tooling for service
-  businesses.
-</p>
+  <section>
+    <h2>Verified work</h2>
+    <div class="rule"></div>
 
-<h2>Verified work</h2>
+    <div class="row">
+      <div class="idx"><span class="dot"></span>01</div>
+      <div>
+        <a class="title" href="https://cveawg.mitre.org/api/cve/CVE-2026-14540" target="_blank" rel="noopener">
+          CVE-2026-14540 — SSRF in Google MCP Toolbox for Databases <span class="arrow">↗</span>
+        </a>
+        <div class="meta">
+          <span class="cvss">CVSS 8.0 · High</span><span class="sep">·</span>CNA: Google<span class="sep">·</span>credited as finder<span class="sep">·</span>2026-07-31
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-  <a href="https://cveawg.mitre.org/api/cve/CVE-2026-14540" target="_blank" rel="noopener">CVE-2026-14540 — SSRF in Google MCP Toolbox for Databases</a>
-  <div class="meta">CVSS v4.0 8.0 (High) · CNA: Google · Credited as finder · Published 2026-07-31</div>
+    <div class="row">
+      <div class="idx"><span class="dot"></span>02</div>
+      <div>
+        <a class="title" href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">
+          mcp-safeguard <span class="arrow">↗</span>
+        </a>
+        <div class="meta">Static-analysis scanner for MCP servers · 66 rules · prompt injection, credential exposure, SSRF, tool poisoning</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>03</div>
+      <div>
+        <a class="title" href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/" target="_blank" rel="noopener">
+          Security Considerations for the Model Context Protocol <span class="arrow">↗</span>
+        </a>
+        <div class="meta">IETF Internet-Draft · individual submission</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>04</div>
+      <div>
+        <a class="title" href="https://github.com/DollhouseMCP/mcp-server/security/advisories/GHSA-x8w3-wqcf-6p5c" target="_blank" rel="noopener">
+          GHSA-x8w3-wqcf-6p5c — AppleScript injection, DollhouseMCP <span class="arrow">↗</span>
+        </a>
+        <div class="meta">GitHub Security Advisory · published · credited as reporter</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Elsewhere</h2>
+    <ul class="links">
+      <li><a href="https://github.com/SyedAnas01">GitHub</a></li>
+      <li><a href="https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en">Google Scholar</a></li>
+      <li><a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF Datatracker</a></li>
+    </ul>
+  </section>
+
+  <footer>
+    <span class="status">syedanas01.github.io</span>
+    <span>last verified 2026-09-05</span>
+  </footer>
+
 </div>
-
-<div class="card">
-  <a href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">mcp-safeguard</a>
-  <div class="meta">Open-source static-analysis scanner for MCP server security — 66 rules covering prompt injection, credential exposure, SSRF, tool poisoning, and credential-handling flaws.</div>
-</div>
-
-<div class="card">
-  <a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/" target="_blank" rel="noopener">Security Considerations for the Model Context Protocol</a>
-  <div class="meta">IETF Internet-Draft, individual submission</div>
-</div>
-
-<div class="card">
-  <a href="https://github.com/DollhouseMCP/mcp-server/security/advisories/GHSA-x8w3-wqcf-6p5c" target="_blank" rel="noopener">GHSA-x8w3-wqcf-6p5c — AppleScript injection in DollhouseMCP</a>
-  <div class="meta">GitHub Security Advisory, published, credited as reporter</div>
-</div>
-
-<h2>Elsewhere</h2>
-<ul class="links">
-  <li><a href="https://github.com/SyedAnas01">GitHub</a></li>
-  <li><a href="https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en">Google Scholar</a></li>
-  <li><a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF Datatracker</a></li>
-</ul>
-
-<footer>
-  syedanas01.github.io · last updated 2026-09-05
-</footer>
-
 </body>
 </html>
