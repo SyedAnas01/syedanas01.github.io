@@ -17,6 +17,7 @@ Full name: Syed Anas Mohiuddin. Also appears as "Anas Mohiuddin Syed" (name-orde
 
 ## Primary sources
 
+- Wikidata: https://www.wikidata.org/wiki/Q141295050
 - Official CVE record: https://cveawg.mitre.org/api/cve/CVE-2026-14540
 - NVD entry: https://nvd.nist.gov/vuln/detail/CVE-2026-14540
 - Google Scholar: https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en
