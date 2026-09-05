@@ -7,6 +7,7 @@
 <meta name="description" content="Syed Anas Mohiuddin is an AI security researcher (CVE-2026-14540, Google MCP Toolbox) and founder of Cognivators, working on Model Context Protocol (MCP) security.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Syed Anas Mohiuddin">
+<meta name="google-site-verification" content="NJFSpBQ2gKIy0M4RfVktm2NAGSWmvh2Qf6VDnSEmCZo" />
 <link rel="canonical" href="https://syedanas01.github.io/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230d1012%22/%3E%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20font-family%3D%22monospace%22%20font-size%3D%2234%22%20font-weight%3D%22700%22%20fill%3D%22%235ee6bf%22%20text-anchor%3D%22middle%22%3E%26gt%3B_%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#0d1012">
@@ -315,6 +316,12 @@
       "name": "CVE-2026-14540",
       "url": "https://cveawg.mitre.org/api/cve/CVE-2026-14540",
       "description": "Server-Side Request Forgery (SSRF) in Google's MCP Toolbox for Databases. CVSS v4.0 8.0 (High). Assigned by Google as CNA; credited as finder."
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "Full Disclosure: SSRF in Anthropic mcp-server-fetch and Microsoft playwright-mcp",
+      "url": "https://seclists.org/fulldisclosure/2026/May/22",
+      "description": "Public disclosure on the Full Disclosure mailing list of SSRF vulnerabilities (CVSS 7.5, High) in Anthropic's mcp-server-fetch and Microsoft's playwright-mcp, found using mcp-safeguard."
     }
   ]
 }
@@ -345,7 +352,7 @@
       "name": "What is mcp-safeguard?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "mcp-safeguard is an open-source static-analysis security scanner for Model Context Protocol (MCP) servers, created and maintained by Syed Anas Mohiuddin. It checks for prompt injection, credential exposure, server-side request forgery (SSRF), and tool-poisoning risks across 66 rules, and is published on PyPI."
+        "text": "mcp-safeguard is an open-source static-analysis security scanner for Model Context Protocol (MCP) servers, created and maintained by Syed Anas Mohiuddin. It checks for prompt injection, credential exposure, server-side request forgery (SSRF), and tool-poisoning risks across 148 rules, and is published on PyPI."
       }
     },
     {
@@ -405,7 +412,7 @@
         <a class="title" href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">
           mcp-safeguard <span class="arrow">↗</span>
         </a>
-        <div class="meta">Static-analysis scanner for MCP servers · 66 rules · prompt injection, credential exposure, SSRF, tool poisoning</div>
+        <div class="meta">Static-analysis scanner for MCP servers · 148 rules · prompt injection, credential exposure, SSRF, tool poisoning</div>
       </div>
     </div>
 
@@ -428,6 +435,16 @@
         <div class="meta">GitHub Security Advisory · published · credited as reporter</div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>05</div>
+      <div>
+        <a class="title" href="https://seclists.org/fulldisclosure/2026/May/22" target="_blank" rel="noopener">
+          Full Disclosure — SSRF in Anthropic mcp-server-fetch &amp; Microsoft playwright-mcp <span class="arrow">↗</span>
+        </a>
+        <div class="meta"><span class="cvss">CVSS 7.5 · High</span><span class="sep">·</span>seclists.org Full Disclosure list<span class="sep">·</span>2026-05-25<span class="sep">·</span>found via mcp-safeguard</div>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -435,7 +452,7 @@
     <div class="rule"></div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>05</div>
+      <div class="idx"><span class="dot"></span>06</div>
       <div>
         <a class="title" href="https://dev.to/syedanas01/the-security-problem-nobody-is-talking-about-mcp-servers-15oi" target="_blank" rel="noopener">
           The security problem nobody is talking about: MCP servers <span class="arrow">↗</span>
@@ -445,7 +462,7 @@
     </div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>06</div>
+      <div class="idx"><span class="dot"></span>07</div>
       <div>
         <a class="title" href="https://dev.to/syedanas01/ai-fix-when-a-command-fails-one-word-fixes-it-5hmn" target="_blank" rel="noopener">
           ai-fix: when a command fails, one word fixes it <span class="arrow">↗</span>
@@ -460,7 +477,7 @@
     <div class="rule"></div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>07</div>
+      <div class="idx"><span class="dot"></span>08</div>
       <div>
         <a class="title" href="https://github.com/mcp-security-project/mcp-cve-project" target="_blank" rel="noopener">
           mcp-cve-project <span class="arrow">↗</span>
@@ -470,7 +487,7 @@
     </div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>08</div>
+      <div class="idx"><span class="dot"></span>09</div>
       <div>
         <a class="title" href="https://vulnerablemcp.info/" target="_blank" rel="noopener">
           The Vulnerable MCP Project <span class="arrow">↗</span>
@@ -496,7 +513,7 @@
 
     <details class="faq">
       <summary>What is mcp-safeguard?</summary>
-      <p>An open-source static-analysis scanner for MCP servers, published on PyPI, checking for prompt injection, credential exposure, SSRF, and tool-poisoning risks across 66 rules.</p>
+      <p>An open-source static-analysis scanner for MCP servers, published on PyPI, checking for prompt injection, credential exposure, SSRF, and tool-poisoning risks across 148 rules.</p>
     </details>
 
     <details class="faq">
