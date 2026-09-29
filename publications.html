@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publications &amp; Disclosures — Syed Anas Mohiuddin</title>
+<meta name="description" content="Dated list of CVEs, security disclosures, papers, and open-source work by Syed Anas Mohiuddin, AI security researcher.">
+<link rel="canonical" href="https://syedanas01.github.io/publications.html">
+<meta property="og:title" content="Publications &amp; Disclosures — Syed Anas Mohiuddin">
+<meta property="og:description" content="Dated list of CVEs, security disclosures, papers, and open-source work by Syed Anas Mohiuddin.">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://syedanas01.github.io/publications.html">
+<meta property="og:image" content="https://syedanas01.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,420;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(15% 0.012 250);
+    --bg-raise: oklch(19% 0.014 250);
+    --text: oklch(93% 0.006 250);
+    --text-dim: oklch(64% 0.014 250);
+    --text-dimmer: oklch(44% 0.014 250);
+    --accent: oklch(78% 0.135 175);
+    --rule: oklch(30% 0.014 250);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 8% -10%, oklch(24% 0.035 175 / 0.35), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 60px 24px 120px;
+  }
+  main { max-width: 68ch; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid oklch(78% 0.135 175 / 0.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 40px; color: var(--text-dim); border: none; font-size: 14px; }
+  .back:hover { color: var(--accent); }
+  .kicker { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .kicker::before { content: "// "; color: var(--text-dimmer); }
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .meta { color: var(--text-dimmer); font-size: 14px; margin-bottom: 40px; }
+  h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 22px;
+    margin: 48px 0 16px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  .entry-list { list-style: none; }
+  .entry-list li { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+  .entry-list li:last-child { border-bottom: none; }
+  .entry-title { font-weight: 600; color: var(--text); }
+  .entry-date { color: var(--text-dimmer); font-size: 13px; }
+  .entry-desc { color: var(--text-dim); font-size: 14.5px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; back</a>
+
+  <p class="kicker">publications &amp; disclosures</p>
+  <h1>Every verifiable credit, dated</h1>
+  <div class="meta">Syed Anas Mohiuddin · AI security researcher · each item links to the independent record, not to this site</div>
+
+  <h2>CVEs &amp; security advisories</h2>
+  <ul class="entry-list">
+    <li>
+      <div class="entry-title">CVE-2026-14540 — SSRF in Google's MCP Toolbox for Databases</div>
+      <div class="entry-date">Published 2026-07-31 · CNA: Google · CVSS v4.0 8.0 (High)</div>
+      <div class="entry-desc">Credited by name as finder. <a href="https://cveawg.mitre.org/api/cve/CVE-2026-14540" target="_blank" rel="noopener">CVE record</a> · <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-14540" target="_blank" rel="noopener">NVD</a> · <a href="/cve-2026-14540.html">writeup</a></div>
+    </li>
+    <li>
+      <div class="entry-title">HackerOne #3968010 — credential leak in Weaviate's Google-backed modules</div>
+      <div class="entry-date">Confirmed and fixed, credited in Weaviate's Security Hall of Fame</div>
+      <div class="entry-desc">Unvalidated apiEndpoint let an attacker-chosen host receive the operator's Google API key or OAuth token. Fixed in <a href="https://github.com/weaviate/weaviate/pull/12961" target="_blank" rel="noopener">weaviate/weaviate PR #12961</a>.</div>
+    </li>
+    <li>
+      <div class="entry-title">GHSA-qw2f-q5g4-38wg — auth bypass in Red Hat's rosa-mcp-server</div>
+      <div class="entry-date">Confirmed by Red Hat</div>
+      <div class="entry-desc">SSE authentication bypass via OCM_OFFLINE_TOKEN fallback. <a href="https://github.com/RHEcosystemAppEng/rosa-mcp-server/security/advisories/GHSA-qw2f-q5g4-38wg" target="_blank" rel="noopener">Advisory</a>.</div>
+    </li>
+    <li>
+      <div class="entry-title">Full Disclosure — SSRF in Anthropic's mcp-server-fetch and Microsoft's playwright-mcp</div>
+      <div class="entry-date">Published on the Full Disclosure mailing list, 2026-05</div>
+      <div class="entry-desc">CVSS 7.5 SSRF found using mcp-safeguard. <a href="https://seclists.org/fulldisclosure/2026/May/22" target="_blank" rel="noopener">Full post</a>.</div>
+    </li>
+  </ul>
+
+  <h2>Standards &amp; papers</h2>
+  <ul class="entry-list">
+    <li>
+      <div class="entry-title">MCP Security Considerations — IETF Internet-Draft</div>
+      <div class="entry-date">draft-mohiuddin-mcp-security-considerations</div>
+      <div class="entry-desc"><a href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/" target="_blank" rel="noopener">IETF Datatracker</a></div>
+    </li>
+    <li>
+      <div class="entry-title">VisQuant — a synthetic benchmark for object counting and spatial reasoning</div>
+      <div class="entry-date">DOI: 10.57967/hf/8943</div>
+      <div class="entry-desc">Vision-language model benchmark dataset. <a href="https://huggingface.co/datasets/Anas-Mohiuddin-Syed/VisQuant" target="_blank" rel="noopener">Hugging Face</a></div>
+    </li>
+  </ul>
+
+  <h2>Open source</h2>
+  <ul class="entry-list">
+    <li>
+      <div class="entry-title">mcp-safeguard</div>
+      <div class="entry-date">Static-analysis security scanner for MCP servers, 148 rules</div>
+      <div class="entry-desc"><a href="https://pypi.org/project/mcp-safeguard/" target="_blank" rel="noopener">PyPI</a> · <a href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">GitHub</a></div>
+    </li>
+  </ul>
+
+  <h2>Elsewhere</h2>
+  <ul class="entry-list">
+    <li><div class="entry-desc"><a href="https://scholar.google.com/citations?user=TayDFZAAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a> · <a href="https://orcid.org/0009-0005-3736-6430" target="_blank" rel="noopener">ORCID</a> · <a href="https://www.wikidata.org/wiki/Q141295050" target="_blank" rel="noopener">Wikidata</a> · <a href="https://github.com/SyedAnas01" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/sam1371" target="_blank" rel="noopener">LinkedIn</a></div></li>
+  </ul>
+
+</main>
+</body>
+</html>
