@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I could not read every MCP server by hand, so I built something that could</title>
+<meta name="description" content="The origin story and methodology behind mcp-safeguard, the open-source scanner that surfaced four confirmed MCP security findings.">
+<link rel="canonical" href="https://syedanas01.github.io/mcp-safeguard-story.html">
+<meta property="og:title" content="I could not read every MCP server by hand, so I built something that could">
+<meta property="og:description" content="The origin story and methodology behind mcp-safeguard, the open-source scanner that surfaced four confirmed MCP security findings.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://syedanas01.github.io/mcp-safeguard-story.html">
+<meta property="og:image" content="https://syedanas01.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,420;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(15% 0.012 250);
+    --bg-raise: oklch(19% 0.014 250);
+    --text: oklch(93% 0.006 250);
+    --text-dim: oklch(64% 0.014 250);
+    --text-dimmer: oklch(44% 0.014 250);
+    --accent: oklch(78% 0.135 175);
+    --rule: oklch(30% 0.014 250);
+    --code-bg: oklch(12% 0.01 250);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 8% -10%, oklch(24% 0.035 175 / 0.35), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 60px 24px 120px;
+  }
+  main { max-width: 68ch; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid oklch(78% 0.135 175 / 0.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 40px; color: var(--text-dim); border: none; font-size: 14px; }
+  .back:hover { color: var(--accent); }
+  .kicker { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .kicker::before { content: "// "; color: var(--text-dimmer); }
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .meta { color: var(--text-dimmer); font-size: 14px; margin-bottom: 40px; }
+  .meta span:not(:last-child)::after { content: " · "; }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 44px; }
+  .badge {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+  .badge.high { color: oklch(75% 0.16 30); border-color: oklch(75% 0.16 30 / 0.4); }
+  h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 24px;
+    margin: 52px 0 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  p { margin-bottom: 18px; color: var(--text); }
+  p.dim { color: var(--text-dim); }
+  ul, ol { margin: 0 0 18px 22px; }
+  li { margin-bottom: 8px; }
+  code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+  .timeline { list-style: none; margin-left: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .timeline li:last-child { border-bottom: none; }
+  .timeline .date { color: var(--text-dimmer); font-size: 14px; white-space: nowrap; }
+  .refs { list-style: none; margin-left: 0; }
+  .refs li { padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .refs li:last-child { border-bottom: none; }
+  .cvss-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+  .cvss-table td, .cvss-table th { padding: 8px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
+  .cvss-table th { color: var(--text-dim); font-weight: 500; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; back</a>
+
+  <p class="kicker">tool &amp; methodology</p>
+  <h1>I could not read every MCP server by hand, so I built something that could</h1>
+
+<p>There is a moment in any security review where you realize the thing
+you are reviewing is growing faster than you can read it. For me, with
+MCP servers, that moment came early in 2026. New servers were appearing
+daily. Every AI vendor, every database, every SaaS product was shipping
+one. And they were all making the same handful of mistakes, in code I
+had not opened yet.</p>
+<p>Manual review does not scale to that. So I wrote a scanner. This is
+the story of <code>mcp-safeguard</code>: why it exists, what it checks,
+what it found, and how the findings turned into an IETF draft.</p>
+<h2 id="the-problem-with-reviewing-mcp-servers-by-hand">The problem with
+reviewing MCP servers by hand</h2>
+<p>An MCP server is small. Most are a few hundred to a few thousand
+lines. You can read one in an afternoon. The problem is that there are
+not one of them. There are thousands, and the number goes up every day,
+and the interesting bugs are not in any single server. They are in the
+pattern across all of them.</p>
+<p>When I reviewed servers manually, I kept finding the same categories.
+A tool description that could be edited to inject instructions into the
+model. A credential passed where the model could see it. A URL parameter
+that went straight to an HTTP client with nothing in between. An OAuth
+scope that was broader than the tool needed. After the fifth or sixth
+server, I was not learning anything new about the servers. I was
+learning that the ecosystem had a shared set of blind spots, and that
+the fastest way to find the next instance was to encode the blind spots
+as rules and run them everywhere.</p>
+<h2 id="what-mcp-safeguard-is">What mcp-safeguard is</h2>
+<p><code>mcp-safeguard</code> is an open-source static analysis security
+scanner for MCP servers. It is published on PyPI under the MIT license,
+source at github.com/SyedAnas01/mcp-safeguard.</p>
+<p>It runs around 150 rules across seven categories:</p>
+<ul>
+<li><strong>Prompt injection.</strong> Tool descriptions, resource
+content, and other model-facing text that could carry instructions the
+model will follow.</li>
+<li><strong>Credential leaks.</strong> Secrets in places the model or
+the client can read, hard-coded keys, tokens passed through tool
+results.</li>
+<li><strong>Endpoint exposure.</strong> Servers or tools that expose
+more surface than they should, or expose it without authentication.</li>
+<li><strong>Tool poisoning.</strong> Ways an attacker could modify a
+tool’s definition or behavior to redirect the model.</li>
+<li><strong>SSRF.</strong> User-influenced URLs reaching HTTP clients
+without allowlists, IP-range checks, or redirect policies.</li>
+<li><strong>OAuth scope.</strong> Tokens requested or accepted with
+broader scope than the server’s function requires.</li>
+<li><strong>Source audit.</strong> General code-quality and dependency
+issues that create security exposure.</li>
+</ul>
+<p>It is static analysis. It reads code, it does not run it. That makes
+it fast and safe to point at anything, and it means the output is a list
+of places a human should look, not a list of confirmed exploits. Every
+finding I have disclosed publicly went through manual verification after
+the scanner flagged it. The scanner’s job is to make sure I am looking
+in the right place.</p>
+<h2 id="what-it-found">What it found</h2>
+<p>The SSRF category is where the scanner earned its keep. It flagged
+the same shape in servers from four different vendors, and each flag
+turned into a confirmed finding.</p>
+<p>In Google’s MCP Toolbox for Databases, an HTTP client with no
+<code>CheckRedirect</code> policy and no target IP validation. That
+became CVE-2026-14540, CVSS v4.0 8.0 High, fixed in v1.5.0. I was
+credited as the finder.</p>
+<p>In Anthropic’s <code>mcp-server-fetch</code> and Microsoft’s
+<code>playwright-mcp</code>, arbitrary URL acceptance with no
+internal-address filtering, and in the fetch server a handler that
+bypassed the server’s own safety check. Disclosed together on Full
+Disclosure on 2026-05-25. Fix status unconfirmed as of disclosure.</p>
+<p>In Weaviate’s Google-backed modules, an <code>apiEndpoint</code>
+field that had escaped two rounds of <code>baseURL</code> hardening and
+let a read-only user redirect a credential-bearing request to their own
+host. Confirmed by Weaviate Security, fixed in PR #12961 on
+2026-09-07.</p>
+<p>A separate finding, noted in the mcp-safeguard README, was a
+token-attachment issue in <code>github/github-mcp-server</code>, fixed
+via PR #3056, merged August 2026.</p>
+<p>Each of these has its own writeup. The point for this piece is that
+none of them were found by reading the vendor’s code cold. They were
+found because a rule fired, and the rule fired because I had seen the
+shape before.</p>
+<h2 id="from-findings-to-guidance">From findings to guidance</h2>
+<p>Finding bugs one at a time is useful. Explaining why they keep
+appearing is more useful, because it lets the next engineer avoid the
+bug before it is written.</p>
+<p>In June 2026 I filed an IETF Internet-Draft,
+<code>draft-mohiuddin-mcp-security-considerations-00</code>, titled
+“Security Considerations for Model Context Protocol (MCP)
+Implementations in AI Agent Systems.” The draft generalizes what the
+scanner and the disclosures taught me into guidance for
+implementers.</p>
+<p>It lays out six vulnerability classes that recur across MCP
+implementations, and it introduces a concept I call <strong>Protocol
+Pivoting</strong>. The idea is simple. An MCP server sits between two
+protocols: the model-facing protocol on one side, and whatever the
+server actually does on the other (HTTP, SQL, a browser, a cloud API).
+An attacker who can influence the model-facing side can pivot through
+the server into the other side. The server is the pivot point, and most
+servers are not built to be one.</p>
+<p>SSRF is Protocol Pivoting where the second protocol is HTTP. Prompt
+injection into a database-backed server is Protocol Pivoting where the
+second protocol is SQL. Once you see the servers as pivot points rather
+than as tools, the trust boundary becomes obvious: it is every parameter
+the server accepts, because every parameter is on the attacker’s side of
+the pivot.</p>
+<h2 id="why-this-is-open-source">Why this is open source</h2>
+<p>I could have kept the rules private and run assessments as a service.
+I released it under MIT because the ecosystem problem is bigger than any
+one reviewer. Thousands of servers are being written by people who have
+never thought about what happens when a model is steered. A free scanner
+they can run in CI does more to close the gap than any number of
+individual disclosures.</p>
+<p>The four findings above are what one person with one tool surfaced in
+nine months. I would rather the next hundred be caught before they
+ship.</p>
+
+  <h2>Timeline</h2>
+  <ol class="timeline">
+    <li><span class="date">2026-05-25</span><span>Anthropic mcp-server-fetch and Microsoft playwright-mcp SSRF
+disclosed on Full Disclosure</span></li>
+    <li><span class="date">June 2026</span><span>draft-mohiuddin-mcp-security-considerations-00 published on
+datatracker.ietf.org</span></li>
+    <li><span class="date">2026-06-18</span><span>Google MCP Toolbox PR #3448 merged, v1.5.0 released</span></li>
+    <li><span class="date">2026-07-31</span><span>CVE-2026-14540 published</span></li>
+    <li><span class="date">August 2026</span><span>github/github-mcp-server PR #3056 (token attachment fix) merged</span></li>
+    <li><span class="date">2026-09-07</span><span>Weaviate PR #12961 merged into stable/v1.37</span></li>
+  </ol>
+  <h2>References</h2>
+  <ul class="refs">
+    <li><a
+href="https://github.com/SyedAnas01/mcp-safeguard">mcp-safeguard</a></li>
+    <li><a
+href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF
+Internet-Draft</a></li>
+    <li><a
+href="https://www.cve.org/CVERecord?id=CVE-2026-14540">CVE-2026-14540</a></li>
+    <li><a href="https://github.com/googleapis/mcp-toolbox/pull/3448">Google
+fix, PR #3448</a></li>
+    <li><a href="https://seclists.org/fulldisclosure/2026/May/22">Full
+Disclosure post</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/12961">Weaviate
+fix, PR #12961</a></li>
+    <li><a
+href="https://github.com/github/github-mcp-server/pull/3056">github-mcp-server
+fix, PR #3056</a></li>
+  </ul>
+
+  <h2>About me</h2>
+  <p>I'm Syed Anas Mohiuddin, an AI security researcher based in New York. I built <a href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">mcp-safeguard</a>, an open-source scanner that checks MCP server code and tool descriptions for exactly this kind of gap. See all my disclosures and papers: <a href="/publications.html">publications</a>. More about my work: <a href="/">syedanas01.github.io</a>.</p>
+
+</main>
+</body>
+</html>

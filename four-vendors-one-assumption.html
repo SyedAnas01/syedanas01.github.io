@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four vendors, one bad assumption: SSRF in MCP servers</title>
+<meta name="description" content="How the same SSRF-shaped bug showed up in Google, Anthropic, Microsoft, and Weaviate's MCP-adjacent servers, found with mcp-safeguard.">
+<link rel="canonical" href="https://syedanas01.github.io/four-vendors-one-assumption.html">
+<meta property="og:title" content="Four vendors, one bad assumption: SSRF in MCP servers">
+<meta property="og:description" content="How the same SSRF-shaped bug showed up in Google, Anthropic, Microsoft, and Weaviate's MCP-adjacent servers, found with mcp-safeguard.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://syedanas01.github.io/four-vendors-one-assumption.html">
+<meta property="og:image" content="https://syedanas01.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,420;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(15% 0.012 250);
+    --bg-raise: oklch(19% 0.014 250);
+    --text: oklch(93% 0.006 250);
+    --text-dim: oklch(64% 0.014 250);
+    --text-dimmer: oklch(44% 0.014 250);
+    --accent: oklch(78% 0.135 175);
+    --rule: oklch(30% 0.014 250);
+    --code-bg: oklch(12% 0.01 250);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 8% -10%, oklch(24% 0.035 175 / 0.35), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 60px 24px 120px;
+  }
+  main { max-width: 68ch; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid oklch(78% 0.135 175 / 0.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 40px; color: var(--text-dim); border: none; font-size: 14px; }
+  .back:hover { color: var(--accent); }
+  .kicker { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .kicker::before { content: "// "; color: var(--text-dimmer); }
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .meta { color: var(--text-dimmer); font-size: 14px; margin-bottom: 40px; }
+  .meta span:not(:last-child)::after { content: " · "; }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 44px; }
+  .badge {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+  .badge.high { color: oklch(75% 0.16 30); border-color: oklch(75% 0.16 30 / 0.4); }
+  h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 24px;
+    margin: 52px 0 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  p { margin-bottom: 18px; color: var(--text); }
+  p.dim { color: var(--text-dim); }
+  ul, ol { margin: 0 0 18px 22px; }
+  li { margin-bottom: 8px; }
+  code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+  .timeline { list-style: none; margin-left: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .timeline li:last-child { border-bottom: none; }
+  .timeline .date { color: var(--text-dimmer); font-size: 14px; white-space: nowrap; }
+  .refs { list-style: none; margin-left: 0; }
+  .refs li { padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .refs li:last-child { border-bottom: none; }
+  .cvss-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+  .cvss-table td, .cvss-table th { padding: 8px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
+  .cvss-table th { color: var(--text-dim); font-weight: 500; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; back</a>
+
+  <p class="kicker">research</p>
+  <h1>Four vendors, one bad assumption: how the same SSRF-shaped bug kept showing up in MCP servers</h1>
+
+<p>There is a particular kind of bug that you only recognize the third
+time you see it. The first time, it looks like a mistake. The second
+time, it looks like a coincidence. By the third time you stop looking at
+the code and start looking at the people who wrote it, because the bug
+is no longer in the code. It is in an assumption everyone shared.</p>
+<p>Over the first nine months of 2026 I found the same assumption in MCP
+servers shipped by Google, Anthropic, Microsoft, and Weaviate. Four
+vendors, four codebases, four different languages and frameworks and
+review cultures. One bug shape. This is the story of that shape, how it
+got there, and what it took to get it out.</p>
+<h2 id="what-an-mcp-server-actually-is">What an MCP server actually
+is</h2>
+<p>If you have not spent time with the Model Context Protocol, the
+one-sentence version is this: an MCP server is a program that accepts
+structured input from a language model and does something in the real
+world with it. Query a database. Fetch a web page. Drive a browser. Call
+an embedding API.</p>
+<p>That sentence hides the entire problem. “Accepts input from a
+language model” sounds like a closed loop. The model is your model. The
+server is your server. Who is the attacker?</p>
+<p>The answer is: whoever controls what the model reads. A prompt
+injected through a web page, a document, a support ticket, or a database
+row can steer the model, and the model will then steer the server. The
+model is not a trusted caller. It is a proxy for every untrusted input
+it has ever seen. Once you internalize that, every parameter an MCP
+server accepts becomes attacker-controlled by definition.</p>
+<p>The four vendors below had not internalized it. And the parameter
+they all forgot to distrust was a URL.</p>
+<h2 id="google-a-redirect-nobody-checked">Google: a redirect nobody
+checked</h2>
+<p>Google’s MCP Toolbox for Databases has an HTTP source type. You point
+it at a base URL, and tools built on that source make requests to paths
+under it. The code that builds the HTTP client lives in
+<code>internal/sources/http/http.go</code>.</p>
+<p>It created a standard Go <code>http.Client</code> with no
+<code>CheckRedirect</code> hook and no validation of where a request
+would actually land. That is two missing things, and they compound. Go’s
+default client follows redirects on its own. Without a
+<code>CheckRedirect</code> policy, the toolbox had no opportunity to
+inspect each hop. Without target IP validation, even the first request
+could be pointed somewhere it should never go.</p>
+<p>Google assigned it CVE-2026-14540, published 2026-07-31 through
+Google’s CNA. CVSS v4.0 8.0 High, CWE-918, Server-Side Request Forgery.
+Affected versions 0.3.0 through 1.4.0. The fix landed in
+googleapis/mcp-toolbox PR #3448, merged 2026-06-18 and released as
+v1.5.0 the same day, adding redirect and target validation. I was
+credited as the finder.</p>
+<p>I wrote a full article on this one. The short version for this piece:
+the assumption was that the base URL configured by the operator was the
+whole trust decision, and everything after that was safe by inheritance.
+Redirects broke that inheritance.</p>
+<h2
+id="anthropic-and-microsoft-the-fetch-that-skips-its-own-guard">Anthropic
+and Microsoft: the fetch that skips its own guard</h2>
+<p>Anthropic’s reference <code>mcp-server-fetch</code> and Microsoft’s
+<code>playwright-mcp</code> do different jobs. One retrieves a URL and
+returns its content. The other drives a real browser. Both take a URL
+from the model.</p>
+<p>Neither had an allowlist. Neither blocked internal IP ranges. Neither
+filtered addresses that resolve to link-local, loopback, or private
+space. A model that has been steered can ask either one to fetch an
+internal admin panel or a metadata endpoint, and the server will
+comply.</p>
+<p>The <code>mcp-server-fetch</code> case had a sharper edge. The server
+does contain a safeguard, a function called
+<code>check_may_autonomously_fetch_url()</code> that is meant to gate
+what the server will retrieve on the model’s behalf. But the
+<code>get_prompt</code> handler calls <code>fetch_url()</code> directly
+and never invokes the check. The guard exists. There is a code path
+around it.</p>
+<p>This is a shape I have come to expect in MCP servers. A security
+control gets added to the primary tool-call path, and the secondary
+paths (prompts, resources, completions) are written by someone else or
+on a different day and simply do not route through it.</p>
+<p>I published both issues together on the Full Disclosure mailing list
+on 2026-05-25. CVSS 3.1 7.5. Neither issue was a secret when I posted,
+both were already visible in public GitHub threads. What the disclosure
+did was consolidate them, assign severity, and put them in a place where
+operators would actually see them. As of the disclosure, I cannot
+confirm that either vendor has shipped a fix, and I am not going to
+claim otherwise here.</p>
+<h2 id="weaviate-the-field-that-dodged-two-hardening-passes">Weaviate:
+the field that dodged two hardening passes</h2>
+<p>This one is my favorite, because Weaviate had already fixed this bug.
+Twice. Just not for the field I found.</p>
+<p>Weaviate is a vector database with pluggable modules that call out to
+embedding and generation APIs. The Google-backed modules
+(<code>text2vec-google</code>, <code>multi2vec-google</code>,
+<code>generative-google</code>) send requests to Google’s API with the
+operator’s Google API key as a bearer credential. Under
+<code>USE_GOOGLE_AUTH=true</code>, they instead send a live GCP OAuth
+token scoped to cloud-platform.</p>
+<p>Most Weaviate modules let you override the upstream host through a
+field called <code>baseURL</code>. Weaviate had hardened that field in
+two passes: PR #10878, merged 2026-03-27, and PR #11683, merged
+2026-06-18, covering 21 URL builders.</p>
+<p>The Google modules do not call their field <code>baseURL</code>. They
+call it <code>apiEndpoint</code>. Both hardening passes were
+structurally scoped to <code>baseURL</code>, so <code>apiEndpoint</code>
+sailed through both of them untouched.</p>
+<p>The consequence: a user who could set <code>apiEndpoint</code> could
+point the module at a host they controlled and receive the operator’s
+Google API key, or the operator’s GCP OAuth token, in the request. There
+were two ways to set it: through the class schema config, which requires
+schema-write access, and through a GraphQL query-time parameter,
+reachable with ordinary read access. You did not need to be an
+administrator. You needed to be able to run a query.</p>
+<p>I reported it through HackerOne. Weaviate Security confirmed it. The
+fix is weaviate/weaviate PR #12961, merged 2026-09-07 into stable/v1.37.
+Weaviate credited me for the report.</p>
+<h2 id="the-assumption">The assumption</h2>
+<p>Line up the four cases and the shared assumption is obvious in
+hindsight.</p>
+<p>Google assumed the operator-configured base URL settled the trust
+question, and that redirects inherited that trust. Anthropic and
+Microsoft assumed the URL a model asks for is a URL the model should
+get, and in one case wrote a check but did not wire it to every path.
+Weaviate assumed that hardening <code>baseURL</code> meant hardening
+“the field that controls the upstream host,” when one module family had
+spelled that field differently.</p>
+<p>In every case, a URL crossed a trust boundary and nobody was standing
+at the boundary. That is what SSRF is. What makes MCP different is that
+the trust boundary has moved. In a classic web app, the attacker types
+the URL into a form. In an MCP server, the attacker plants text
+somewhere a model will read it, and the model types the URL. The server
+sees a request from its own trusted model and does not think to ask
+where the idea came from.</p>
+<h2 id="how-i-found-the-pattern">How I found the pattern</h2>
+<p>I did not find these by reading four codebases end to end. I found
+them because I had stopped being able to read MCP servers by hand and
+had written a tool to do the first pass for me.</p>
+<p><code>mcp-safeguard</code> is an open-source static analysis scanner
+for MCP servers. It is on PyPI, MIT licensed, and it runs around 150
+rules across seven categories: prompt injection, credential leaks,
+endpoint exposure, tool poisoning, SSRF, OAuth scope, and source audit.
+When the same rule fires on Google’s Go code and Anthropic’s Python and
+Weaviate’s module layer, you stop treating each hit as a one-off.</p>
+<p>I generalized the findings into an IETF Internet-Draft,
+<code>draft-mohiuddin-mcp-security-considerations-00</code>, which lays
+out six vulnerability classes and names the underlying move “Protocol
+Pivoting”: an attacker enters through the model-facing protocol and
+pivots into whatever the server can reach behind it.</p>
+<h2 id="where-this-stands">Where this stands</h2>
+<p>Four confirmed findings. Google fixed and issued a CVE. Weaviate
+fixed and credited. Anthropic and Microsoft disclosed publicly, with fix
+status unconfirmed as of that disclosure. And the tool that surfaced the
+pattern is public and free.</p>
+<p>There is a fifth report, still working through a vendor’s disclosure
+process. It will be added here once it is public.</p>
+
+  <h2>Timeline</h2>
+  <ol class="timeline">
+    <li><span class="date">2026-03-27</span><span>Weaviate PR #10878 (baseURL validation, opt-in) merged</span></li>
+    <li><span class="date">2026-05-25</span><span>Anthropic mcp-server-fetch and Microsoft playwright-mcp SSRF
+disclosed on Full Disclosure</span></li>
+    <li><span class="date">June 2026</span><span>IETF Internet-Draft draft-mohiuddin-mcp-security-considerations-00
+published</span></li>
+    <li><span class="date">2026-06-18</span><span>Google PR #3448 (SSRF guard) merged, v1.5.0 released</span></li>
+    <li><span class="date">2026-06-18</span><span>Weaviate PR #11683 (X-*-BaseURL header validation) merged</span></li>
+    <li><span class="date">2026-07-31</span><span>CVE-2026-14540 published by Google’s CNA</span></li>
+    <li><span class="date">2026-09-07</span><span>Weaviate PR #12961 (Google module apiEndpoint restriction) merged
+into stable/v1.37</span></li>
+  </ol>
+  <h2>References</h2>
+  <ul class="refs">
+    <li><a
+href="https://www.cve.org/CVERecord?id=CVE-2026-14540">CVE-2026-14540</a></li>
+    <li><a href="https://github.com/googleapis/mcp-toolbox/pull/3448">Google
+fix, googleapis/mcp-toolbox PR #3448</a></li>
+    <li><a href="https://seclists.org/fulldisclosure/2026/May/22">Full
+Disclosure post, 2026-05-25</a></li>
+    <li><a
+href="https://github.com/modelcontextprotocol/servers/issues/4116">modelcontextprotocol/servers
+#4116</a>, <a
+href="https://github.com/modelcontextprotocol/servers/issues/4143">#4143</a>,
+<a
+href="https://github.com/modelcontextprotocol/servers/issues/4205">#4205</a></li>
+    <li><a
+href="https://github.com/microsoft/playwright-mcp/issues/1626">microsoft/playwright-mcp
+#1626</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/10878">Weaviate PR
+#10878</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/11683">Weaviate PR
+#11683</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/12961">Weaviate
+fix, PR #12961</a></li>
+    <li><a
+href="https://github.com/SyedAnas01/mcp-safeguard">mcp-safeguard</a></li>
+    <li><a
+href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/">IETF
+Internet-Draft</a></li>
+  </ul>
+
+  <h2>About me</h2>
+  <p>I'm Syed Anas Mohiuddin, an AI security researcher based in New York. I built <a href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">mcp-safeguard</a>, an open-source scanner that checks MCP server code and tool descriptions for exactly this kind of gap. See all my disclosures and papers: <a href="/publications.html">publications</a>. More about my work: <a href="/">syedanas01.github.io</a>.</p>
+
+</main>
+</body>
+</html>

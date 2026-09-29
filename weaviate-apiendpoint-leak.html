@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The field two security patches missed: Weaviate's apiEndpoint credential leak</title>
+<meta name="description" content="How an unvalidated apiEndpoint field in Weaviate's Google-backed modules leaked Google API keys and GCP OAuth tokens, and why two prior SSRF hardening passes missed it.">
+<link rel="canonical" href="https://syedanas01.github.io/weaviate-apiendpoint-leak.html">
+<meta property="og:title" content="The field two security patches missed: Weaviate's apiEndpoint credential leak">
+<meta property="og:description" content="How an unvalidated apiEndpoint field in Weaviate's Google-backed modules leaked Google API keys and GCP OAuth tokens, and why two prior SSRF hardening passes missed it.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://syedanas01.github.io/weaviate-apiendpoint-leak.html">
+<meta property="og:image" content="https://syedanas01.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,420;9..144,520&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: oklch(15% 0.012 250);
+    --bg-raise: oklch(19% 0.014 250);
+    --text: oklch(93% 0.006 250);
+    --text-dim: oklch(64% 0.014 250);
+    --text-dimmer: oklch(44% 0.014 250);
+    --accent: oklch(78% 0.135 175);
+    --rule: oklch(30% 0.014 250);
+    --code-bg: oklch(12% 0.01 250);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 8% -10%, oklch(24% 0.035 175 / 0.35), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 60px 24px 120px;
+  }
+  main { max-width: 68ch; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid oklch(78% 0.135 175 / 0.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  .back { display: inline-block; margin-bottom: 40px; color: var(--text-dim); border: none; font-size: 14px; }
+  .back:hover { color: var(--accent); }
+  .kicker { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .kicker::before { content: "// "; color: var(--text-dimmer); }
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .meta { color: var(--text-dimmer); font-size: 14px; margin-bottom: 40px; }
+  .meta span:not(:last-child)::after { content: " · "; }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 44px; }
+  .badge {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+  .badge.high { color: oklch(75% 0.16 30); border-color: oklch(75% 0.16 30 / 0.4); }
+  h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 520;
+    font-size: 24px;
+    margin: 52px 0 18px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  p { margin-bottom: 18px; color: var(--text); }
+  p.dim { color: var(--text-dim); }
+  ul, ol { margin: 0 0 18px 22px; }
+  li { margin-bottom: 8px; }
+  code {
+    font-family: "IBM Plex Mono", monospace;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+  .timeline { list-style: none; margin-left: 0; }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .timeline li:last-child { border-bottom: none; }
+  .timeline .date { color: var(--text-dimmer); font-size: 14px; white-space: nowrap; }
+  .refs { list-style: none; margin-left: 0; }
+  .refs li { padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .refs li:last-child { border-bottom: none; }
+  .cvss-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+  .cvss-table td, .cvss-table th { padding: 8px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
+  .cvss-table th { color: var(--text-dim); font-weight: 500; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">&larr; back</a>
+
+  <p class="kicker">vulnerability writeup</p>
+  <h1>The field two security patches missed: leaking Google credentials through Weaviate's apiEndpoint</h1>
+
+<p>Security fixes have a scope, and the scope is usually a name. You
+harden <code>baseURL</code>. You audit every place <code>baseURL</code>
+is read. You write a test for <code>baseURL</code>. You ship. And if one
+module in the codebase calls the same concept <code>apiEndpoint</code>
+instead, your fix has a hole exactly the shape of that module.</p>
+<p>This is what happened in Weaviate. It had shipped two rounds of
+hardening against SSRF through user-controlled upstream hosts. Both were
+real, well-scoped improvements. Both were built around a field called
+<code>baseURL</code>. The Google-backed modules used a field called
+<code>apiEndpoint</code>, and through it, a user with nothing more than
+read access could receive the operator’s Google API key, or a live GCP
+OAuth token, delivered to a server of their choosing.</p>
+<h2 id="how-weaviate-talks-to-google">How Weaviate talks to Google</h2>
+<p>Weaviate is a vector database. To turn text or images into vectors,
+or to generate text from retrieved context, it calls out to external
+model APIs through modules. Three of those modules are backed by Google:
+<code>text2vec-google</code>, <code>multi2vec-google</code>, and
+<code>generative-google</code>.</p>
+<p>When one of those modules makes a request to Google, it
+authenticates. By default it attaches the operator’s Google API key as a
+bearer credential. If the operator has set
+<code>USE_GOOGLE_AUTH=true</code>, the module instead obtains a GCP
+OAuth token with cloud-platform scope and attaches that. Cloud-platform
+scope is the broad one. A token with that scope is not a key to one API.
+It is a key to the project.</p>
+<p>The module needs to know where to send the request. That is the
+<code>apiEndpoint</code> field. Under normal circumstances it points at
+a Google API host. Under the circumstances I found, it could point
+anywhere.</p>
+<h2 id="the-two-patches-that-came-first">The two patches that came
+first</h2>
+<p>Weaviate had already been working on this class of problem. Most of
+its modules expose a field called <code>baseURL</code> for overriding
+the upstream host, which is useful for proxies and regional endpoints
+and self-hosted compatible services. It is also a textbook SSRF vector
+if left unvalidated.</p>
+<p>PR #10878, merged 2026-03-27, introduced validation of
+<code>baseURL</code> values, opt-in behind the environment variable
+<code>MODULES_VALIDATE_BASE_URL</code>.</p>
+<p>PR #11683, merged 2026-06-18, closed a bypass where the same override
+could be supplied through request headers, and touched 21 URL builders
+across the module layer.</p>
+<p>Two passes. Both correct for what they targeted. Neither touched the
+Google modules’ <code>apiEndpoint</code>, because
+<code>apiEndpoint</code> is not <code>baseURL</code>, and the hardening
+was structured around the name.</p>
+<h2 id="the-finding">The finding</h2>
+<p>With <code>apiEndpoint</code> unvalidated, the attack is
+straightforward. Set it to a host you control. Trigger a request. Read
+the <code>Authorization</code> header when it arrives. What arrives is
+the operator’s Google API key, or under
+<code>USE_GOOGLE_AUTH=true</code>, a live cloud-platform-scoped OAuth
+token.</p>
+<p>There were two ways to set the field. The first is through the class
+schema configuration, which requires schema-write access. Serious, but
+bounded. The second is what made this a high-severity report: the Google
+modules also accept <code>apiEndpoint</code> as a query-time parameter
+through GraphQL. A user who can run a query can set it for that query.
+No schema change. No write permission. Ordinary read access, the kind
+you give to any application that searches the database, is enough to
+redirect the credential-bearing request to an attacker’s host.</p>
+<p>That second path collapses the privilege requirement to almost
+nothing. If your Weaviate instance accepts queries from users, and your
+Google modules are configured, those users could exfiltrate the
+credential that your instance uses to talk to Google.</p>
+<h2 id="why-the-earlier-fixes-structurally-could-not-catch-it">Why the
+earlier fixes structurally could not catch it</h2>
+<p>I want to be precise here because it is the interesting part. This
+was not a case of Weaviate forgetting to enable validation, or a config
+flag being off. PR #10878 and PR #11683 were built to validate
+<code>baseURL</code>. The Google modules had no <code>baseURL</code>.
+They had <code>apiEndpoint</code>, plus <code>region</code> and
+<code>location</code> fields that also participate in constructing the
+request target. The validation logic had nothing to attach to. It did
+not fail. It was never in the path.</p>
+<p>This is a pattern worth naming in your own codebases. When a security
+control is keyed to an identifier, every place that expresses the same
+concept under a different identifier is uncovered, and no amount of
+testing the identifier will find it. The audit question is not “did we
+validate <code>baseURL</code>?” It is “what are all the fields that
+determine where an outbound request goes, and did we validate each of
+them?”</p>
+<h2 id="disclosure-and-fix">Disclosure and fix</h2>
+<p>I reported the issue to Weaviate through HackerOne. Weaviate Security
+confirmed it.</p>
+<p>The fix is weaviate/weaviate PR #12961, merged 2026-09-07 into
+stable/v1.37. The title tells you the fix did what the earlier patches
+structurally could not: it went to the Google modules specifically,
+identified all three fields that shape the request target
+(<code>apiEndpoint</code>, <code>region</code>, <code>location</code>),
+and constrained them to Google API hosts. No more arbitrary destinations
+for a request carrying a Google credential.</p>
+<p>Weaviate credited me for the report.</p>
+<h2 id="the-broader-lesson">The broader lesson</h2>
+<p>I found this while looking at MCP-adjacent infrastructure for a
+pattern I had already seen in Google’s MCP Toolbox and in Anthropic’s
+and Microsoft’s MCP servers: a user-influenced URL crossing a trust
+boundary with nobody checking. Weaviate is not an MCP server, but it is
+exactly the kind of component that sits behind one, and the shape of the
+bug was identical.</p>
+<p>What makes the Weaviate case distinct is the credential. In a typical
+SSRF, the payoff is reaching an internal endpoint. Here, the payoff was
+the request itself. Weaviate did not need to reach anything sensitive.
+It just needed to send its normal, authenticated request to the wrong
+host, and the credential walked out with it. When your service attaches
+a bearer token to outbound requests, every field that controls the
+destination of those requests is a credential-exfiltration vector, and
+it needs to be treated with that level of care regardless of what it is
+called.</p>
+
+  <h2>Timeline</h2>
+  <ol class="timeline">
+    <li><span class="date">2026-03-27</span><span>weaviate/weaviate PR #10878 (baseURL validation, opt-in via
+MODULES_VALIDATE_BASE_URL) merged</span></li>
+    <li><span class="date">2026-06-18</span><span>weaviate/weaviate PR #11683 (X-*-BaseURL header validation, 21 URL
+builders) merged</span></li>
+    <li><span class="date"></span><span>Report submitted via HackerOne; confirmed by Weaviate Security</span></li>
+    <li><span class="date">2026-09-07</span><span>weaviate/weaviate PR #12961 (Google module
+apiEndpoint/region/location restriction) merged into stable/v1.37</span></li>
+  </ol>
+  <h2>References</h2>
+  <ul class="refs">
+    <li><a href="https://github.com/weaviate/weaviate/pull/10878">Weaviate PR
+#10878</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/11683">Weaviate PR
+#11683</a></li>
+    <li><a href="https://github.com/weaviate/weaviate/pull/12961">Weaviate
+fix, PR #12961</a></li>
+    <li><a
+href="https://github.com/SyedAnas01/mcp-safeguard">mcp-safeguard</a></li>
+  </ul>
+
+  <h2>About me</h2>
+  <p>I'm Syed Anas Mohiuddin, an AI security researcher based in New York. I built <a href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">mcp-safeguard</a>, an open-source scanner that checks MCP server code and tool descriptions for exactly this kind of gap. See all my disclosures and papers: <a href="/publications.html">publications</a>. More about my work: <a href="/">syedanas01.github.io</a>.</p>
+
+</main>
+</body>
+</html>
