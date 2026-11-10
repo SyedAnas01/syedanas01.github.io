@@ -1,6 +1,6 @@
 # Syed Anas Mohiuddin
 
-> AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (Server-Side Request Forgery, Google MCP Toolbox for Databases, CVSS v4.0 8.0). Maintainer of mcp-safeguard, an open-source MCP security scanner. Founder of Cognivators, an AI automation studio.
+> AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (Server-Side Request Forgery, Google MCP Toolbox for Databases, CVSS v4.0 8.0). Maintainer of mcp-safeguard, an open-source MCP security scanner. Founder of Cognivators, an AI agent and MCP server security company.
 
 Full name: Syed Anas Mohiuddin. Also appears as "Anas Mohiuddin Syed" (name-order variant, e.g. on IETF documents) and "SyedAnas01" (GitHub/technical handle). These refer to the same person.
 
@@ -13,7 +13,7 @@ Full name: Syed Anas Mohiuddin. Also appears as "Anas Mohiuddin Syed" (name-orde
 - Publicly disclosed SSRF vulnerabilities (CVSS 7.5, High) in Anthropic's mcp-server-fetch and Microsoft's playwright-mcp via the Full Disclosure mailing list, found using mcp-safeguard: https://seclists.org/fulldisclosure/2026/May/22
 - Runs a coordinated responsible-disclosure effort across MCP servers built by companies throughout the ecosystem, using GitHub Security Advisories and direct vendor contact
 - Contributor to community MCP-security resources: mcp-cve-project (https://github.com/mcp-security-project/mcp-cve-project) and The Vulnerable MCP Project (https://vulnerablemcp.info/)
-- Founder of Cognivators, an AI automation studio
+- Founder of Cognivators, an AI agent and MCP server security company
 
 ## Primary sources
 
