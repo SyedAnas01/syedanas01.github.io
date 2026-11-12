@@ -183,11 +183,6 @@ turned into a confirmed finding.</p>
 <code>CheckRedirect</code> policy and no target IP validation. That
 became CVE-2026-14540, CVSS v4.0 8.0 High, fixed in v1.5.0. I was
 credited as the finder.</p>
-<p>In Anthropic’s <code>mcp-server-fetch</code> and Microsoft’s
-<code>playwright-mcp</code>, arbitrary URL acceptance with no
-internal-address filtering, and in the fetch server a handler that
-bypassed the server’s own safety check. Disclosed together on Full
-Disclosure on 2026-05-25. Fix status unconfirmed as of disclosure.</p>
 <p>In Weaviate’s Google-backed modules, an <code>apiEndpoint</code>
 field that had escaped two rounds of <code>baseURL</code> hardening and
 let a read-only user redirect a credential-bearing request to their own
@@ -237,8 +232,6 @@ ship.</p>
 
   <h2>Timeline</h2>
   <ol class="timeline">
-    <li><span class="date">2026-05-25</span><span>Anthropic mcp-server-fetch and Microsoft playwright-mcp SSRF
-disclosed on Full Disclosure</span></li>
     <li><span class="date">June 2026</span><span>draft-mohiuddin-mcp-security-considerations-00 published on
 datatracker.ietf.org</span></li>
     <li><span class="date">2026-06-18</span><span>Google MCP Toolbox PR #3448 merged, v1.5.0 released</span></li>
@@ -257,8 +250,6 @@ Internet-Draft</a></li>
 href="https://www.cve.org/CVERecord?id=CVE-2026-14540">CVE-2026-14540</a></li>
     <li><a href="https://github.com/googleapis/mcp-toolbox/pull/3448">Google
 fix, PR #3448</a></li>
-    <li><a href="https://seclists.org/fulldisclosure/2026/May/22">Full
-Disclosure post</a></li>
     <li><a href="https://github.com/weaviate/weaviate/pull/12961">Weaviate
 fix, PR #12961</a></li>
     <li><a
