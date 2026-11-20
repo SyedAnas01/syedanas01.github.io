@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Syed Anas Mohiuddin — AI Security Researcher</title>
-<meta name="description" content="Syed Anas Mohiuddin is an AI security researcher (CVE-2026-14540, Google MCP Toolbox) working on Model Context Protocol (MCP) security.">
+<meta name="description" content="Syed Anas Mohiuddin is an AI security researcher (4 CVEs: CVE-2026-14540 Google, CVE-2026-125271 AWS, CVE-2026-116635 AWS, CVE-2026-97228 Rapid7) working on Model Context Protocol (MCP) security.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Syed Anas Mohiuddin">
 <meta name="google-site-verification" content="NJFSpBQ2gKIy0M4RfVktm2NAGSWmvh2Qf6VDnSEmCZo" />
@@ -14,7 +14,7 @@
 
 <meta property="og:type" content="profile">
 <meta property="og:title" content="Syed Anas Mohiuddin — AI Security Researcher">
-<meta property="og:description" content="AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (Google MCP Toolbox, CVSS 8.0).">
+<meta property="og:description" content="AI security researcher focused on Model Context Protocol (MCP) security. 4 CVEs across Google, AWS, and Rapid7. Maintainer of mcp-safeguard.">
 <meta property="og:url" content="https://syedanas01.github.io/">
 <meta property="og:site_name" content="Syed Anas Mohiuddin">
 <meta property="og:image" content="https://syedanas01.github.io/Syed_Anas_Mohiuddin_portrait.jpg">
@@ -26,7 +26,7 @@
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Syed Anas Mohiuddin — AI Security Researcher">
-<meta name="twitter:description" content="Discoverer of CVE-2026-14540 (Google MCP Toolbox, CVSS 8.0). Maintainer of mcp-safeguard. Model Context Protocol security research.">
+<meta name="twitter:description" content="4 CVEs across Google, AWS, and Rapid7. Maintainer of mcp-safeguard. Model Context Protocol security research.">
 <meta name="twitter:image" content="https://syedanas01.github.io/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -295,7 +295,7 @@
   "url": "https://syedanas01.github.io/",
   "image": "https://syedanas01.github.io/Syed_Anas_Mohiuddin_portrait.jpg",
   "jobTitle": "AI Security Researcher",
-  "description": "AI security researcher focused on Model Context Protocol (MCP) security. Discoverer of CVE-2026-14540 (SSRF, Google MCP Toolbox for Databases, CVSS 8.0).",
+  "description": "AI security researcher focused on Model Context Protocol (MCP) security. 4 CVEs: CVE-2026-14540 (Google, CVSS 8.0 High), CVE-2026-125271 (AWS, CVSS 7.8 High), CVE-2026-116635 (AWS, CVSS 6.1 Medium), CVE-2026-97228 (Rapid7, CVSS 2.7 Low). Maintainer of mcp-safeguard.",
   "nationality": { "@type": "Country", "name": "India" },
   "worksFor": { "@type": "Organization", "name": "Cognivators" },
   "knowsAbout": [
@@ -383,9 +383,11 @@
   <p class="lede">
     I research security in the <strong>Model Context Protocol</strong> ecosystem,
     the emerging standard connecting AI agents to tools, data, and each other.
-    I discovered and reported <strong>CVE-2026-14540</strong>, a Server-Side
-    Request Forgery vulnerability in Google's MCP Toolbox for Databases,
-    assigned by Google as the CVE Numbering Authority. Since 2026 I've run a
+    I discovered and reported <strong>4 CVEs</strong> across Google, AWS, and Rapid7:
+    <strong>CVE-2026-14540</strong> (SSRF, Google MCP Toolbox, CVSS 8.0 High),
+    <strong>CVE-2026-125271</strong> (AWS API MCP denyList bypass, CVSS 7.8 High),
+    <strong>CVE-2026-116635</strong> (AWS Serverless MCP path traversal, CVSS 6.1 Medium),
+    <strong>CVE-2026-97228</strong> (Rapid7 Bulk Export MCP GraphQL injection, CVSS 2.7 Low). Since 2026 I've run a
     coordinated responsible-disclosure effort across MCP servers built by
     companies throughout the ecosystem, working through GitHub Security
     Advisories and direct vendor contact, several currently in vendor
@@ -414,6 +416,42 @@
     <div class="row">
       <div class="idx"><span class="dot"></span>02</div>
       <div>
+        <a class="title" href="https://cveawg.mitre.org/api/cve/CVE-2026-125271" target="_blank" rel="noopener">
+          CVE-2026-125271 — AWS API MCP Server Security Policy Bypass <span class="arrow">↗</span>
+        </a>
+        <div class="meta">
+          <span class="cvss">CVSS 7.8 · High</span><span class="sep">·</span>CNA: AWS<span class="sep">·</span>denyList/elicitList bypass<span class="sep">·</span>2026-11-10<span class="sep">·</span><a href="https://aws.amazon.com/security/security-bulletins/2026-176-aws/">AWS bulletin ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>03</div>
+      <div>
+        <a class="title" href="https://cveawg.mitre.org/api/cve/CVE-2026-116635" target="_blank" rel="noopener">
+          CVE-2026-116635 — AWS Serverless MCP Path Traversal <span class="arrow">↗</span>
+        </a>
+        <div class="meta">
+          <span class="cvss">CVSS 6.1 · Medium</span><span class="sep">·</span>CNA: AWS<span class="sep">·</span>path traversal in deployment status<span class="sep">·</span>2026-11-02<span class="sep">·</span><a href="https://aws.amazon.com/security/security-bulletins/2026-164-aws/">AWS bulletin ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>04</div>
+      <div>
+        <a class="title" href="https://cveawg.mitre.org/api/cve/CVE-2026-97228" target="_blank" rel="noopener">
+          CVE-2026-97228 — Rapid7 Bulk Export MCP GraphQL Injection <span class="arrow">↗</span>
+        </a>
+        <div class="meta">
+          <span class="cvss">CVSS 2.7 · Low</span><span class="sep">·</span>CNA: Rapid7<span class="sep">·</span>GraphQL query injection<span class="sep">·</span>2026-09-25<span class="sep">·</span>credited as Independent Researcher
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="idx"><span class="dot"></span>05</div>
+      <div>
         <a class="title" href="https://github.com/SyedAnas01/mcp-safeguard" target="_blank" rel="noopener">
           mcp-safeguard <span class="arrow">↗</span>
         </a>
@@ -422,7 +460,7 @@
     </div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>03</div>
+      <div class="idx"><span class="dot"></span>06</div>
       <div>
         <a class="title" href="https://datatracker.ietf.org/doc/draft-mohiuddin-mcp-security-considerations/" target="_blank" rel="noopener">
           Security Considerations for the Model Context Protocol <span class="arrow">↗</span>
@@ -432,7 +470,7 @@
     </div>
 
     <div class="row">
-      <div class="idx"><span class="dot"></span>04</div>
+      <div class="idx"><span class="dot"></span>07</div>
       <div>
         <a class="title" href="https://github.com/DollhouseMCP/mcp-server/security/advisories/GHSA-x8w3-wqcf-6p5c" target="_blank" rel="noopener">
           GHSA-x8w3-wqcf-6p5c — AppleScript injection, DollhouseMCP <span class="arrow">↗</span>
